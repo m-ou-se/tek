@@ -1,0 +1,7 @@
+Truly Ergonomic Keyboard Firmware Upgrade Tool
+----------------------------------------------
+
+To upgrade the firmware on your keyboard, you need need permission to access the
+raw usb device.
+To give yourself this permission, copy 40-tek.rules into /etc/udev/rules.d.
+Otherwise, you might have to run the tool as root.

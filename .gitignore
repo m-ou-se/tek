@@ -1,0 +1,6 @@
+.*
+!.gitignore
+*.o
+/background.inc
+/tek.*
+/tek-*
