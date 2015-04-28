@@ -30,19 +30,20 @@ tek.exe: $(patsubst %.cpp,%-win.o,$(SOURCES)) rc-win.o
 	$(WIN_STRIP) -s $@
 
 %-lin.o: %.cpp
-	$(LIN_CXX) -c $(CXXFLAGS) `$(LIN_WXCONFIG) --cxxflags` $^ -o $@
+	$(LIN_CXX) -c $(CXXFLAGS) `$(LIN_WXCONFIG) --cxxflags` $(filter %.cpp,$^) -o $@
 
 %-win.o: %.cpp
-	$(WIN_CXX) -c $(CXXFLAGS) `$(WIN_WXCONFIG) --cxxflags` $^ -o $@
+	$(WIN_CXX) -c $(CXXFLAGS) `$(WIN_WXCONFIG) --cxxflags` $(filter %.cpp,$^) -o $@
 
 %-mac.o: %.cpp
-	$(OSX_CXX) -c $(CXXFLAGS) `$(OSX_WXCONFIG) --cxxflags` $^ -o $@
+	$(OSX_CXX) -c $(CXXFLAGS) `$(OSX_WXCONFIG) --cxxflags` $(filter %.cpp,$^) -o $@
 
 background.inc: background.png
 	xxd -p $< | sed -e 's/../0x&,/g' > $@
 
-gui.cpp: background.inc ihex.hpp usb.hpp
-usb.cpp: usb.hpp
+gui-lin.o: background.inc
+gui-lin.o gui-win.o gui-mac.o: ihex.hpp usb.hpp
+usb-lin.o usb-win.o usb-mac.o: usb.hpp
 
 rc-win.o: info.rc icon.ico background.png
 	$(WINDRES) $< -O coff -o $@
