@@ -1,3 +1,4 @@
+#include <iostream>
 #include <fstream>
 #include <string>
 #include <stdexcept>
@@ -202,22 +203,55 @@ wxThread::ExitCode UploadThread::Entry() {
 	std::string err;
 	try {
 		auto c = usb::connect();
-		if (!c.first) throw std::runtime_error{"No Truly Ergonomic Keyboard found."};
-		if (c.second) {
-			usb::switch_mode(c.first);
-			usb::close(c.first);
-			for (int i = 0; i < 5; ++i) {
+		auto &dev = c.first;
+		auto &need_switch = c.second;
+		if (!dev) throw std::runtime_error{"No Truly Ergonomic Keyboard found."};
+		std::clog << "Found keyboard." << std::endl;
+		if (need_switch) {
+			std::clog << "It is in normal mode." << std::endl;
+			int retries = 0;
+			while (true) {
+				if (dev) {
+					std::clog << "Switching it to upgrade mode." << std::endl;
+					usb::switch_mode(dev);
+					usb::close(dev);
+				}
 				wxSleep(1);
+				std::clog << "Reconnecting." << std::endl;
 				c = usb::connect();
-				if (c.first) break;
+				if (!dev) {
+					std::clog << "No keyboard found." << std::endl;
+				} else if (need_switch) {
+					std::clog << "Reconnected, but keyboard is in normal mode." << std::endl;
+				} else {
+					std::clog << "Reconnected to keyboard in upgrade mode." << std::endl;
+					break;
+				}
+				if (++retries < 5) {
+					std::clog << "Retrying." << std::endl;
+				} else {
+					std::clog << "Giving up." << std::endl;
+					break;
+				}
 			}
-			if (!c.first) throw std::runtime_error{"Keyboard did not reconnect after switching it to firmware upgrade mode.\nPlease reconnect it and try again."};
-			if (c.second) throw std::runtime_error{"Unable to switch keyboard to firmware upgrade mode. Is DIP #5 set to OFF?"};
+			if (!dev) {
+				throw std::runtime_error{"Keyboard did not reconnect after switching it to firmware upgrade mode.\nPlease reconnect it and try again."};
+			}
+			if (need_switch) {
+				usb::close(dev);
+				throw std::runtime_error{"Unable to switch keyboard to firmware upgrade mode. Is DIP #5 set to OFF?"};
+			}
+		} else {
+			std::clog << "It is already in upgrade mode." << std::endl;
 		}
-		usb::program(c.first, handler_->firmware_.data(), handler_->firmware_.size());
-		usb::switch_mode(c.first);
-		usb::close(c.first);
+		std::clog << "Uploading firmware." << std::endl;
+		usb::program(dev, handler_->firmware_.data(), handler_->firmware_.size());
+		std::clog << "Switching back to normal mode." << std::endl;
+		usb::switch_mode(dev);
+		usb::close(dev);
+		std::clog << "Done." << std::endl;
 	} catch (std::exception &e) {
+		std::clog << "Error: " << e.what() << std::endl;
 		err = e.what();
 	}
 	auto ev = new wxThreadEvent(wxEVT_THREAD, ID_UPLOAD_THREAD_FINISHED);
