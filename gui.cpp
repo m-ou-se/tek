@@ -41,7 +41,7 @@ class MainFrame : public wxFrame {
 public:
 	MainFrame() : wxFrame(
 		nullptr, wxID_ANY, "Truly Ergonomic Keyboard - Firmware Upgrade",
-		wxPoint(50, 50), wxSize(537, 50),
+		wxPoint(50, 50), wxSize(537, 227),
 		wxDEFAULT_FRAME_STYLE & ~(wxRESIZE_BORDER | wxMAXIMIZE_BOX)
 	) {
 		auto file = new wxMenu;
@@ -57,17 +57,22 @@ public:
 		SetMenuBar(menu);
 		CreateStatusBar();
 
-		auto panel = new wxPanel(this, -1, wxPoint(0, 0), wxSize(537, 245));
+		auto panel = new wxCustomBackgroundWindow<wxPanel>();
+		panel->Create(this, -1, wxPoint(0, 0), wxSize(537, 227));
 
-		auto bg = new wxCustomBackgroundWindow<wxPanel>();
-		bg->Create(panel, -1, wxPoint(0, 0), wxSize(537, 58));
-		bg->SetBackgroundBitmap(wxBITMAP_PNG(background));
+		panel->SetBackgroundBitmap(wxBITMAP_PNG(background));
 
-		load_ = new wxButton(panel, wxID_OPEN, "1. Load file", wxPoint(30, 80), wxSize(100, 30));
-		upload_ = new wxButton(panel, wxID_UP, "2. Upload", wxPoint(30, 150), wxSize(100, 30));
+		load_ = new wxButton(panel, wxID_OPEN, "1. Load file", wxPoint(), wxSize(100, 28));
+		load_->SetPosition(wxPoint(30, 100 - load_->GetSize().GetHeight() / 2));
 
-		filename_ = new wxStaticText(panel, -1, wxEmptyString, wxPoint(150, 85), wxSize(357, 20), wxST_ELLIPSIZE_START);
-		progress_ = new wxGauge(panel, -1, 100, wxPoint(150, 150), wxSize(357, 30));
+		filename_ = new wxTextCtrl(panel, -1, wxEmptyString, wxPoint(), wxSize(357, 22), wxTE_READONLY);
+		filename_->SetPosition(wxPoint(150, 100 - filename_->GetSize().GetHeight() / 2));
+
+		upload_ = new wxButton(panel, wxID_UP, "2. Upload", wxPoint(), wxSize(100, 28));
+		upload_->SetPosition(wxPoint(30, 165 - upload_->GetSize().GetHeight() / 2));
+
+		progress_ = new wxGauge(panel, -1, 100, wxPoint(), wxSize(357, 22));
+		progress_->SetPosition(wxPoint(150, 165 - progress_->GetSize().GetHeight() / 2));
 
 		timer_ = new wxTimer(this, ID_PROGRESS_TIMER);
 
@@ -89,7 +94,7 @@ public:
 	}
 
 private:
-	wxStaticText *filename_ = nullptr;
+	wxTextCtrl *filename_ = nullptr;
 	wxButton *load_ = nullptr;
 	wxMenuItem *load_menu_ = nullptr;
 	wxButton *upload_ = nullptr;
@@ -125,7 +130,7 @@ private:
 			wxMessageBox(e.what(), "Error while loading file", wxICON_ERROR | wxOK | wxCENTRE, this);
 			return;
 		}
-		filename_->SetLabel(fn);
+		filename_->SetValue(fn);
 		SetStatusText("Ready to upload.");
 		enable(true, true);
 	}
