@@ -1,15 +1,15 @@
 0 ICON "icon.ico"
 1 VERSIONINFO
-FILEVERSION    1,0,0,0
-PRODUCTVERSION 1,0,0,0
+FILEVERSION    1,1,0,0
+PRODUCTVERSION 1,1,0,0
 BEGIN
 	BLOCK "StringFileInfo"
 	BEGIN
 		BLOCK "080904E4"
 		BEGIN
 			VALUE "FileDescription", "Truly Ergonomic Keyboard Firmware Upgrade"
-			VALUE "FileVersion", "1.0"
-			VALUE "ProductVersion", "1.0"
+			VALUE "FileVersion", "1.1"
+			VALUE "ProductVersion", "1.1"
 			VALUE "LegalCopyright", "Mara Bos"
 			VALUE "CompanyName", "Truly Ergonomic"
 			VALUE "ProductName", "Keyboard Firmware Upgrade"
