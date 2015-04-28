@@ -149,7 +149,7 @@ private:
 	void OnAbout(wxCommandEvent &e) {
 		wxAboutDialogInfo info;
 		info.SetName("Truly Ergonomic Keyboard Firmware Upgrade");
-		info.SetVersion("1.0.0");
+		info.SetVersion("1.1.0");
 		info.SetDescription("This tool can upload new firmware to your Truly Ergonomic Keyboard over USB.");
 		info.SetCopyright("2015 - Maurice Bos");
 		wxAboutBox(info);
