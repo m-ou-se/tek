@@ -11,7 +11,7 @@ WINDRES=i686-w64-mingw32-windres
 
 OSX_CXX=x86_64-apple-darwin14-clang++-libc++ -I/usr/local/x86_64-apple-darwin14/include
 OSX_WXCONFIG=/usr/local/x86_64-apple-darwin14/bin/wx-config
-osx_strip=x86_64-apple-darwin14-strip
+OSX_STRIP=x86_64-apple-darwin14-strip
 
 SOURCES=gui.cpp ihex.cpp usb.cpp
 
