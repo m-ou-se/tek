@@ -49,7 +49,7 @@ public:
 		auto help = new wxMenu;
 		auto menu = new wxMenuBar;
 		load_menu_ = file->Append(wxID_OPEN, "&Load...\tCtrl-O", "Load a firmware file.");
-		upload_menu_ = file->Append(wxID_UP, "&Upload\tCtrl-U", "Upload the loaded file into the keyboard.");
+		upload_menu_ = file->Append(wxID_UP, "&Upgrade\tCtrl-U", "Upgrade your keyboard to the loaded firmware.");
 		file->AppendSeparator();
 		file->Append(wxID_EXIT);
 		help->Append(wxID_ABOUT);
@@ -69,7 +69,7 @@ public:
 		filename_ = new wxTextCtrl(panel, -1, wxEmptyString, wxPoint(), wxSize(357, 22), wxTE_READONLY);
 		filename_->SetPosition(wxPoint(150, 100 - filename_->GetSize().GetHeight() / 2));
 
-		upload_ = new wxButton(panel, wxID_UP, "2. Upload", wxPoint(), wxSize(100, 28));
+		upload_ = new wxButton(panel, wxID_UP, "2. Upgrade", wxPoint(), wxSize(100, 28));
 		upload_->SetPosition(wxPoint(30, 165 - upload_->GetSize().GetHeight() / 2));
 
 		progress_ = new wxGauge(panel, -1, 100, wxPoint(), wxSize(357, 22));
@@ -110,7 +110,7 @@ private:
 
 	void OnLoad(wxCommandEvent &e) {
 		auto fn = wxFileSelector(
-			"Select the firmware you want to upload.",
+			"Select the firmware you want to upgrade your keyboard to.",
 			wxEmptyString,
 			wxEmptyString,
 			wxEmptyString,
@@ -133,14 +133,14 @@ private:
 		}
 		filename_->SetValue(fn);
 		filename_->SetInsertionPoint(filename_->GetLastPosition());
-		SetStatusText("Ready to upload.");
+		SetStatusText("Ready to upgrade.");
 		enable(true, true);
 	}
 
 	void OnUpload(wxCommandEvent &e) {
 		wxCriticalSectionLocker enter(upload_thread_cs_);
 		enable(false, false);
-		SetStatusText("Uploading...");
+		SetStatusText("Upgrading...");
 		timer_->Start(50);
 		upload_thread_ = new UploadThread(this);
 		upload_thread_->Create(1024*1024);
