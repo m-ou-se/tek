@@ -132,6 +132,7 @@ private:
 			return;
 		}
 		filename_->SetValue(fn);
+		filename_->SetInsertionPoint(filename_->GetLastPosition());
 		SetStatusText("Ready to upload.");
 		enable(true, true);
 	}
