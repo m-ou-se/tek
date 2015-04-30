@@ -203,9 +203,18 @@ UploadThread::~UploadThread() {
 wxThread::ExitCode UploadThread::Entry() {
 	std::string err;
 	try {
-		auto c = usb::connect();
+		std::pair<libusb_device_handle *, bool> c;
 		auto &dev = c.first;
 		auto &need_switch = c.second;
+		std::cerr << "Connecting to keyboard." << std::endl;
+		try {
+			c = usb::connect();
+		} catch (std::exception &e) {
+			std::cerr << "Error in connect: " << e.what() << std::endl;
+			wxSleep(1);
+			std::cerr << "Trying again to connect." << std::endl;
+			c = usb::connect();
+		}
 		if (!dev) throw std::runtime_error{"No Truly Ergonomic Keyboard found."};
 		std::clog << "Found keyboard." << std::endl;
 		if (need_switch) {
@@ -214,12 +223,21 @@ wxThread::ExitCode UploadThread::Entry() {
 			while (true) {
 				if (dev) {
 					std::clog << "Switching it to upgrade mode." << std::endl;
-					usb::switch_mode(dev);
+					try {
+						usb::switch_mode(dev);
+					} catch (std::exception &e) {
+						std::cerr << "Error in switch_mode: " << e.what() << std::endl;
+					}
 					usb::close(dev);
 				}
 				wxSleep(1);
 				std::clog << "Reconnecting." << std::endl;
-				c = usb::connect();
+				try {
+					c = usb::connect();
+				} catch (std::exception &e) {
+					std::cerr << "Error in connect: " << e.what() << std::endl;
+					dev = nullptr;
+				}
 				if (!dev) {
 					std::clog << "No keyboard found." << std::endl;
 				} else if (need_switch) {
