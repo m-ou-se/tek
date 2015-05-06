@@ -48,8 +48,8 @@ public:
 		auto file = new wxMenu;
 		auto help = new wxMenu;
 		auto menu = new wxMenuBar;
-		load_menu_ = file->Append(wxID_OPEN, "&Load...\tCtrl-O", "Load a firmware file.");
-		upload_menu_ = file->Append(wxID_UP, "&Upgrade\tCtrl-U", "Upgrade your keyboard to the loaded firmware.");
+		load_menu_ = file->Append(wxID_OPEN, "&Load\tCtrl-O", "Load Firmware.");
+		upload_menu_ = file->Append(wxID_UP, "&Upgrade\tCtrl-U", "Upgrade Firmware.");
 		file->AppendSeparator();
 		file->Append(wxID_EXIT);
 		help->Append(wxID_ABOUT);
@@ -63,7 +63,7 @@ public:
 
 		panel->SetBackgroundBitmap(wxBITMAP_PNG(background));
 
-		load_ = new wxButton(panel, wxID_OPEN, "1. Load file", wxPoint(), wxSize(100, 28));
+		load_ = new wxButton(panel, wxID_OPEN, "1. Load", wxPoint(), wxSize(100, 28));
 		load_->SetPosition(wxPoint(30, 100 - load_->GetSize().GetHeight() / 2));
 
 		filename_ = new wxTextCtrl(panel, -1, wxEmptyString, wxPoint(), wxSize(357, 22), wxTE_READONLY);
@@ -110,7 +110,7 @@ private:
 
 	void OnLoad(wxCommandEvent &e) {
 		auto fn = wxFileSelector(
-			"Select the firmware you want to upgrade your keyboard to.",
+			"Select Firmware.",
 			wxEmptyString,
 			wxEmptyString,
 			wxEmptyString,
@@ -133,7 +133,7 @@ private:
 		}
 		filename_->SetValue(fn);
 		filename_->SetInsertionPoint(filename_->GetLastPosition());
-		SetStatusText("Ready to upgrade.");
+		SetStatusText("Ready to Upgrade.");
 		enable(true, true);
 	}
 
@@ -149,9 +149,9 @@ private:
 
 	void OnAbout(wxCommandEvent &e) {
 		wxAboutDialogInfo info;
-		info.SetName("Truly Ergonomic Keyboard Firmware Upgrade");
+		info.SetName("Truly Ergonomic Keyboard - Firmware Upgrade");
 		info.SetVersion("1.2.0");
-		info.SetDescription("This tool can upload new firmware to your Truly Ergonomic Keyboard over USB.");
+		info.SetDescription("This tool upgrades the Firmware of your Truly Ergonomic keyboard over USB.");
 		info.SetCopyright("2015 - Maurice Bos");
 		wxAboutBox(info);
 	}
@@ -167,12 +167,12 @@ private:
 		auto err = e.GetPayload<std::string>();
 		if (err.empty()) {
 			progress_->SetValue(100);
-			SetStatusText("Keyboard firmware upgraded.");
-			wxMessageBox("Succesfully upgraded keyboard firmware.", "Done");
+			SetStatusText("Keyboard Firmware upgraded.");
+			wxMessageBox("Succesfully upgraded Firmware.", "Done");
 		} else {
 			progress_->SetValue(0);
 			SetStatusText("Error while upgrading.");
-			wxMessageBox("Error while upgrading keyboard firmware:\n\n" + err, "Error", wxICON_ERROR | wxOK | wxCENTRE);
+			wxMessageBox("Error while upgrading firmware:\n\n" + err, "Error", wxICON_ERROR | wxOK | wxCENTRE);
 		}
 		enable(true, true);
 	}
@@ -215,14 +215,14 @@ wxThread::ExitCode UploadThread::Entry() {
 			std::cerr << "Trying again to connect." << std::endl;
 			c = usb::connect();
 		}
-		if (!dev) throw std::runtime_error{"No Truly Ergonomic Keyboard found."};
+		if (!dev) throw std::runtime_error{"No Truly Ergonomic keyboard found."};
 		std::clog << "Found keyboard." << std::endl;
 		if (need_switch) {
 			std::clog << "It is in normal mode." << std::endl;
 			int retries = 0;
 			while (true) {
 				if (dev) {
-					std::clog << "Switching it to upgrade mode." << std::endl;
+					std::clog << "Switching keyboard to upgrade mode." << std::endl;
 					try {
 						usb::switch_mode(dev);
 					} catch (std::exception &e) {
@@ -258,7 +258,7 @@ wxThread::ExitCode UploadThread::Entry() {
 			}
 			if (need_switch) {
 				usb::close(dev);
-				throw std::runtime_error{"Unable to switch keyboard to firmware upgrade mode. Is DIP #5 set to OFF?"};
+				throw std::runtime_error{"Unable to switch keyboard to firmware upgrade mode.\nMake sure DIP #5 is set to OFF."};
 			}
 		} else {
 			std::clog << "It is already in upgrade mode." << std::endl;
