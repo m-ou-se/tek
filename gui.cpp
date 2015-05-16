@@ -151,7 +151,7 @@ private:
 		wxAboutDialogInfo info;
 		info.SetName("Truly Ergonomic Keyboard - Firmware Upgrade");
 		info.SetVersion("1.2.0");
-		info.SetDescription("This tool upgrades the Firmware of your Truly Ergonomic keyboard over USB.");
+		info.SetDescription("This tool upgrades the Firmware of your Truly Ergonomic keyboard over USB.\nThe source code is available on: http://github.com/m-ou-se/tek");
 		info.SetCopyright("2015 - Mara Bos");
 		wxAboutBox(info);
 	}
