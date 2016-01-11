@@ -6,4 +6,4 @@ It has a simple GUI, and runs on Linux, Mac OS X, and Windows.
 
 ## Command-line tool
 
-Note that there is also a command-line tool which can upgrade the firmware of these keyboards: https://github.com/m-ou-se/teck-programmer
+Note that there is also a open source (GPL) command-line tool which can upgrade the firmware of these keyboards: https://github.com/m-ou-se/teck-programmer
